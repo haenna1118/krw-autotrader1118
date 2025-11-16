@@ -1,0 +1,109 @@
+[build-system]
+requires = ["setuptools>=45", "wheel", "setuptools-scm[toml]>=6.2"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "krw-autotrader"
+version = "0.1.0.dev0"
+description = "FastAPI-based backend for automated cryptocurrency trading with Korean won (KRW) support"
+readme = "README.md"
+requires-python = ">=3.12"
+license = { text = "Unlicense" }
+authors = [
+  { name = "haenna1118", email = "contact@example.com" },
+]
+keywords = ["cryptocurrency", "trading", "fastapi", "ccxt", "krw"]
+classifiers = [
+  "Development Status :: 3 - Alpha",
+  "Environment :: Web Environment",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: The Unlicense (Unlicense)",
+  "Natural Language :: English",
+  "Operating System :: OS Independent",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Internet :: WWW/HTTP :: Dynamic Content",
+  "Topic :: Office/Business :: Financial :: Investment",
+]
+
+dependencies = [
+  "fastapi>=0.104.0",
+  "uvicorn[standard]>=0.24.0",
+  "pydantic>=2.0.0",
+  "ccxt>=4.0.0",
+  "python-dotenv>=1.0.0",
+]
+
+[project.optional-dependencies]
+dev = [
+  "pytest>=7.0.0",
+  "pytest-asyncio>=0.21.0",
+  "httpx>=0.24.0",
+  "ruff>=0.1.0",
+  "mypy>=1.0.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/haenna1118/krw-autotrader1118"
+Repository = "https://github.com/haenna1118/krw-autotrader1118"
+Issues = "https://github.com/haenna1118/krw-autotrader1118/issues"
+
+[tool.setuptools]
+packages = ["backend"]
+package-dir = { "" = "autotrader-app" }
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+python_files = ["test_*.py"]
+python_classes = ["Test*"]
+python_functions = ["test_*"]
+addopts = "-v --tb=short"
+# PYTHONPATH set at runtime to include autotrader-app
+env = [
+  "PYTHONPATH=autotrader-app",
+]
+
+[tool.ruff]
+# Line length: 100 characters (balance between readability and conciseness)
+line-length = 100
+# Python version target
+target-version = "py312"
+
+[tool.ruff.lint]
+# Error codes to check for
+select = [
+  "E",    # pycodestyle errors
+  "F",    # Pyflakes
+  "W",    # pycodestyle warnings
+  "I",    # isort (import ordering)
+  "N",    # pep8-naming
+  "UP",   # pyupgrade
+]
+
+# Ignore specific rules
+ignore = [
+  "E501",  # Line too long (handled by formatter)
+]
+
+[tool.ruff.format]
+# Prefer double quotes for strings (FastAPI/Pydantic convention)
+quote-style = "double"
+indent-size = 4
+skip-magic-trailing-comma = false
+
+[tool.mypy]
+python_version = "3.12"
+warn_return_any = true
+warn_unused_configs = true
+warn_unused_ignores = true
+disallow_untyped_defs = false
+disallow_incomplete_defs = false
+ignore_missing_imports = true
+follow_imports = "silent"
+
+[[tool.mypy.overrides]]
+module = [
+  "ccxt.*",
+  "dotenv.*",
+]
+ignore_missing_imports = true
