@@ -16,8 +16,12 @@ spec:
     spec:
       containers:
         - name: krw-autotrader
-          # Replace this image with your registry/image tag
-          image: ghcr.io/haenna1118/krw-autotrader:latest
+          # Image should point to the built image in your registry. Using the
+          # current commit short-hash tag makes deployments reproducible.
+          # Build & push an image with this tag first, e.g.:
+          #   docker build -t ghcr.io/haenna1118/krw-autotrader:8ed2dcb .
+          #   docker push ghcr.io/haenna1118/krw-autotrader:8ed2dcb
+          image: ghcr.io/haenna1118/krw-autotrader:8ed2dcb
           imagePullPolicy: IfNotPresent
           ports:
             - containerPort: 8000
