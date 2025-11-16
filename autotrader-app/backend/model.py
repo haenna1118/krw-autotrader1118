@@ -19,5 +19,4 @@ def read_root():
 
 @app.post("/items/")
 def create_item(item: Item):
-    # Echo the validated item back as JSON
     return item
