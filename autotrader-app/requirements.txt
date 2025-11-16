@@ -4,3 +4,5 @@ pydantic
 ccxt
 python-dotenv
 pytest
+httpx
+ruff
