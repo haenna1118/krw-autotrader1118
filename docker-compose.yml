@@ -1,0 +1,55 @@
+version: "3.9"
+
+services:
+  # Production-like service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: krw-autotrader
+    ports:
+      - "8000:8000"
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+
+  # Development service with hot-reload
+  app-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: krw-autotrader-dev
+    ports:
+      - "8001:8000"
+    volumes:
+      - ./autotrader-app:/app
+      - /app/__pycache__  # Exclude pycache from sync
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONDONTWRITEBYTECODE=1
+    restart: unless-stopped
+    profiles: ["dev"]  # Enable with: docker-compose --profile dev up
+
+  # Testing service
+  tests:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    container_name: krw-autotrader-tests
+    volumes:
+      - ./autotrader-app:/app
+      - ./tests:/app/../tests
+    environment:
+      - PYTHONUNBUFFERED=1
+      - PYTHONPATH=.
+    working_dir: /
+    command: pytest /tests -v --tb=short
+    restart: "no"
+    profiles: ["test"]  # Enable with: docker-compose --profile test up

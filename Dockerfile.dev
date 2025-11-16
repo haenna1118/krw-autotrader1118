@@ -1,0 +1,33 @@
+# Development Dockerfile with hot-reload support
+# Use volume mounts for auto-reload on file changes
+
+FROM python:3.12-slim
+
+LABEL description="KRW AutoTrader - Development environment with hot-reload"
+
+WORKDIR /app
+
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    build-essential \
+    libssl-dev \
+    libffi-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create non-root user
+RUN useradd -m -u 1000 trader && chown -R trader:trader /app
+
+# Install Python dependencies
+COPY autotrader-app/requirements.txt .
+RUN pip install --upgrade pip setuptools wheel && \
+    pip install --no-cache-dir -r requirements.txt
+
+# Copy application code
+COPY autotrader-app/ .
+
+USER trader
+
+EXPOSE 8000
+
+# Run with hot-reload enabled
+CMD ["uvicorn", "backend.model:app", "--host", "0.0.0.0", "--port", "8000", "--reload"]
