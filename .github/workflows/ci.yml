@@ -33,6 +33,8 @@ jobs:
   lint:
     runs-on: ubuntu-latest
     name: Lint (ruff)
+    permissions:
+      contents: write
 
     steps:
       - uses: actions/checkout@v4
@@ -49,8 +51,48 @@ jobs:
           pip install ruff
 
       - name: Run ruff check
+        id: ruff-check
         run: |
+          set +e
           ruff check autotrader-app/ tests/
+          rc=$?
+          echo "exit_code=$rc" >> $GITHUB_OUTPUT
+          set -e
+
+      - name: Annotate PR when ruff fails
+        if: ${{ steps.ruff-check.outputs.exit_code != '0' && github.event_name == 'pull_request' }}
+        uses: actions/github-script@v7
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          script: |
+            const pr = context.payload.pull_request
+            if (!pr) return
+            const body = `⚠️ Ruff failed for this PR. Run ` + "`ruff format --fix autotrader-app/ tests/`" + ` locally to apply automatic fixes, or allow the CI to create a fix commit on push.`
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: pr.number,
+              body,
+            })
+
+      - name: Try auto-format and push (on push events)
+        if: ${{ steps.ruff-check.outputs.exit_code != '0' && github.event_name == 'push' }}
+        run: |
+          ruff format autotrader-app/ tests/
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "No changes from ruff format"
+          else
+            git commit -m "style: ruff auto-format fixes"
+            # Push back to the ref that triggered the workflow
+            if [ -n "${GITHUB_REF_NAME:-}" ]; then
+              git push origin "HEAD:${GITHUB_REF_NAME}"
+            else
+              git push
+            fi
+          fi
 
       - name: Run ruff format check
         run: |
