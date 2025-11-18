@@ -58,10 +58,7 @@ python_files = ["test_*.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
 addopts = "-v --tb=short"
-# PYTHONPATH set at runtime to include autotrader-app
-env = [
-  "PYTHONPATH=autotrader-app",
-]
+# PYTHONPATH can be set at runtime to include `autotrader-app` (e.g. export PYTHONPATH=autotrader-app)
 
 [tool.ruff]
 # Line length: 100 characters (balance between readability and conciseness)
@@ -88,7 +85,6 @@ ignore = [
 [tool.ruff.format]
 # Prefer double quotes for strings (FastAPI/Pydantic convention)
 quote-style = "double"
-indent-size = 4
 skip-magic-trailing-comma = false
 
 [tool.mypy]

@@ -7,9 +7,10 @@ AUTOTRADER_APP = os.path.join(ROOT, "autotrader-app")
 if AUTOTRADER_APP not in sys.path:
     sys.path.insert(0, AUTOTRADER_APP)
 
-from fastapi.testclient import TestClient
+# Imports below require `autotrader-app` on `sys.path` — noqa E402 is used
+from fastapi.testclient import TestClient  # noqa: E402, I001
 
-from backend.model import app
+from backend.model import app  # noqa: E402, I001
 
 client = TestClient(app)
 
