@@ -7,9 +7,8 @@ AUTOTRADER_APP = os.path.join(ROOT, "autotrader-app")
 if AUTOTRADER_APP not in sys.path:
     sys.path.insert(0, AUTOTRADER_APP)
 
-from fastapi.testclient import TestClient
-
 from backend.model import app
+from fastapi.testclient import TestClient
 
 client = TestClient(app)
 
