@@ -1,5 +1,3 @@
-from typing import Optional
-
 from fastapi import FastAPI
 from pydantic import BaseModel
 
@@ -8,7 +6,7 @@ app = FastAPI()
 
 class Item(BaseModel):
     name: str
-    description: Optional[str] = None
+    description: str | None = None
     price: float
 
 
