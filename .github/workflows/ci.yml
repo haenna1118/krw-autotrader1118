@@ -27,7 +27,6 @@ jobs:
 
       - name: Run tests
         run: |
-          cd /home/runner/work/krw-autotrader1118/krw-autotrader1118
           PYTHONPATH=autotrader-app pytest tests/ -v
 
   lint:
